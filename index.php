@@ -1,11 +1,6 @@
 <?php
-    session_start();
     require_once 'vendor/dbconnect.php';
-    if ($_SESSION['user']) {
-        $isLogin = true;
-    } else {
-        $isLogin = false;
-    }
+
    require_once("components/header.php");
 ?>
 <!DOCTYPE html>
@@ -44,21 +39,23 @@
         <div class="list-group" id="list-tab" role="tablist">
             <?php
             $category_query = mysqli_query($connect, "SELECT * FROM `category` ORDER BY id");
+            $categoryTepm = [];
             while ($row = mysqli_fetch_assoc($category_query)) {
                 $categoryTepm[] = $row;
             }
             $category_id = 0;
             ?>
-            <?foreach($categoryTepm as $category): ?>
-            <a class="list-group-item list-group-item-action <? if($category_id === 0) echo 'active';?>" id="list-category<?=$category_id?>-list" data-toggle="list" href="#list-category<?=$category_id?>" role="tab" aria-controls="category<?=$category_id?>"><?=$category['name']?></a>
-            <? $category_id++; ?>
-            <? endforeach; $category_id = 0; ?>
+
+            <?php foreach($categoryTepm as $category): ?>
+            <a class="list-group-item list-group-item-action <?php if($category_id === 0) echo 'active';?>" id="list-category<?=$category_id?>-list" data-toggle="list" href="#list-category<?=$category_id?>" role="tab" aria-controls="category<?=$category_id?>"><?=$category['name']?></a>
+                <?php $category_id++;?>
+            <?php endforeach; $category_id = 0; ?>
         </div>
     </div>
     <div class="col-9">
         <div class="tab-content" id="nav-tabContent">
-            <?foreach($categoryTepm as $category): ?>
-            <div class="tab-pane fade col-9 <? if($category_id === 0) echo 'show active';?>" style="position:absolute;" id="list-category<?=$category_id?>" role="tabpanel" aria-labelledby="list-category<?=$category_id?>-list">
+            <?php foreach($categoryTepm as $category): ?>
+            <div class="tab-pane fade col-9 <?php if($category_id === 0) echo 'show active';?>" style="position:absolute;" id="list-category<?=$category_id?>" role="tabpanel" aria-labelledby="list-category<?=$category_id?>-list">
                     <?php
                         $id = $category['id'];
                         if(!empty($_POST['sort'])) {
@@ -77,28 +74,27 @@
                             echo 'В этой категории нет товаров';
                         }
                     ?>
-                    <?error_reporting('warning')?>
-                    <?foreach($productsTepm as $product): ?>
-                        <?
+                <?php foreach($productsTepm as $product): ?>
+                    <?php
                             $img_array = json_decode($product['img'], true);
                             $i++;
                         ?>
                         <div class="card w-25 position-relative">
-                            <?if($product['forAdults']) echo '<span class="position-absolute top-0 right-0 pbadge bg-danger" style="z-index:999; border-radius:50px;">18+</span>'?>
+                            <?php if($product['forAdults']) echo '<span class="position-absolute top-0 right-0 pbadge bg-danger" style="z-index:999; border-radius:50px;">18+</span>'?>
                             <div id="carouselExampleIndicators<?=$i?>" class="carousel slide" data-ride="carousel">
                                 <ol class="carousel-indicators">
-                                    <?foreach($img_array as $img):?>
+                                    <?php foreach($img_array as $img):?>
                                     <li data-target="#carouselExampleIndicators<?=$i?>" data-slide-to="<?=$g?>"></li>
-                                    <? $g++; ?>
-                                    <? endforeach; $g = 0?>
+                                        <?php $g++; ?>
+                                    <?php endforeach; $g = 0?>
                                 </ol>
                                 <div class="carousel-inner">
-                                    <?foreach($img_array as $img):?>
-                                        <div class="carousel-item <? if($a === 0) echo 'active';?>">
+                                    <?php foreach($img_array as $img):?>
+                                        <div class="carousel-item <?php if($a === 0) echo 'active';?>">
                                         <img class="d-block w-100 h-200px" src="<?=$img?>" alt="<?=$a?> слайд">
                                     </div>
-                                    <? $a++; ?>
-                                    <? endforeach; $a = 0?>
+                                        <?php $a++; ?>
+                                    <?php endforeach; $a = 0?>
                                 </div>
                                 <a class="carousel-control-prev" href="#carouselExampleIndicators<?=$i?>" role="button" data-slide="prev">
                                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -114,7 +110,7 @@
                                 <p class="card-text"><?= $product['description'] ?></p>
                             </div>
                             <div class="card-footer">
-                                <? if($product['sale'] && $product['sale_date'] > date('Y-m-d')) {
+                                <?php if($product['sale'] && $product['sale_date'] > date('Y-m-d')) {
                                         $price = $product['price']/100 * (100 - $product['sale']);
                                         echo '
                                         <span class="badge badge-pill badge-info" style="text-decoration: line-through;">$ '.$product['price'].'</span>
@@ -125,7 +121,7 @@
                                     }
                                 ?>
                                 <form style="display: inline" action="vendor/AddCart.php" method="GET">
-                                    <?
+                                    <?php
                                     if($_SESSION['isLogin']) {
                                         echo '
                                         <input type="hidden" name="product_id" value="'.$product['id'].'">
@@ -139,10 +135,10 @@
                                 </form>
                             </div>
                         </div>
-                <? endforeach; $productsTepm = [];?>
+                <?php endforeach; $productsTepm = [];?>
             </div>
-            <? $category_id++; ?>
-            <? endforeach; $category_id = 0; ?>
+                <?php $category_id++; ?>
+            <?php endforeach; $category_id = 0; ?>
         </div>
     </div>
     </div>

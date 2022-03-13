@@ -1,18 +1,27 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
+}
 
     require_once 'vendor/dbconnect.php';
 
-    if($_SESSION['isLogin']) {
+    if(isset($_SESSION['isLogin']) && $_SESSION['isLogin']) {
         $isLogin = $_SESSION['isLogin'];
     } else {
         $isLogin =  false;
     }
-    $user = $_SESSION['user'];
-    $user_id = $user['id'];
-    $cart_query = mysqli_query($connect, "SELECT * FROM `cart` WHERE `user_id` = '$user_id'");
-    $cart = mysqli_num_rows($cart_query);
+
+    if ($isLogin) {
+        $user = $_SESSION['user'];
+        $user_id = $user['id'];
+        $cart_query = mysqli_query($connect, "SELECT * FROM `cart` WHERE `user_id` = '$user_id'");
+        $cart = mysqli_num_rows($cart_query);
+    } else {
+        $cart = [];
+        $user = null;
+    }
+
 ?>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -39,7 +48,7 @@
                         if($isLogin) {
                             echo '
                             <div class="d-flex">';
-                            if ($user['admin_lvl'] !== null) {
+                            if ($user && $user['admin_lvl'] !== null) {
                                 echo '
                                 <a href="/admin.php" class="btn btn-warning mr-2 position-relativ">
                                     Админ панель
@@ -153,7 +162,7 @@
     </div>
     <!-- Alerts -->
     <?php 
-        if($_SESSION['message']) {
+        if(isset($_SESSION['message']) && $_SESSION['message']) {
             $message = $_SESSION['message'];
             if($message["type"] === "success") {
                 echo '
