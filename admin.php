@@ -1,4 +1,4 @@
-<?
+<?php
     session_start();
 
     require_once 'vendor/dbconnect.php';
@@ -30,7 +30,7 @@
 </head>
 <body>
     <?='Ваш админ лвл: '.$admin_status.''?>
-    <?if($admin_status === 'Администратор'){?>
+    <?php if($admin_status === 'Администратор'){?>
     <div class="add-product">
         <h2>Добавить товар</h2>
         <form class="row col-6 row-cols-lg-auto g-3 align-items-center" action="vendor/addProduct.php" method="post" enctype="multipart/form-data">
@@ -54,10 +54,10 @@
                 }
                 $category_id = 1;   
                 ?>
-                <?foreach($categoryTepm as $category): ?>
-                    <option <? if($category_id === 0) { echo 'selected';} else {echo 'value="'.$category_id.'"';}?>><?=$category['name']?></option>
-                <? $category_id++; ?>
-                <? endforeach; $category_id = 0; ?>
+                    <?php foreach($categoryTepm as $category): ?>
+                    <option <?php if($category_id === 0) { echo 'selected';} else {echo 'value="'.$category_id.'"';}?>><?=$category['name']?></option>
+                        <?php $category_id++; ?>
+                    <?php endforeach; $category_id = 0; ?>
                 </select>
             </div>
             <div class="col-12">
@@ -87,15 +87,15 @@
             <button type="submit" class="ml-5 btn btn-success">Добавить товар</button>
         </form>
     </div>
-    <?}?>
+    <?php }?>
     <div class="order-list">
         <h2>Список заказов</h2>
-        <?
+        <?php
         $order_query = mysqli_query($connect, "SELECT * FROM `order_user` ORDER BY `date_time` DESC");
         if(mysqli_num_rows($order_query) > 0) {
         ?>
         <ul class="list-group">
-            <?
+            <?php
                 while ($row = mysqli_fetch_assoc($order_query)) {
 
                     $products = json_decode($row['filling']);
@@ -131,15 +131,15 @@
                     <form class="m-0" action="vendor/updateOrder.php" method="post">
                         Статус:
                         <select class="form-select" aria-label="Default select example" id="select-<?=$row['order_id']?>" onchange="OnSelectionChange(this)">
-                            <?foreach($status_array as $status):?>       
-                                <option <? if($status  === $row['status']) echo 'selected';?> value="<?=$status?>"><?=$status?></option>
-                            <? endforeach ?> 
+                            <?php foreach($status_array as $status):?>
+                                <option <?php if($status  === $row['status']) echo 'selected';?> value="<?=$status?>"><?=$status?></option>
+                            <?php endforeach ?>
                         </select>
                         <input type="hidden" name="order_id" value="<?=$row['order_id']?>">
                         <input type="hidden" name="order_status" id="status_order-select-<?=$row['order_id']?>">
                         <button type="submit" class="btn btn-success" style="display:none;" id="btn-save-select-<?=$row['order_id']?>">Сохранить</button>
                     </form>
-                    <?
+                    <?php
                         echo '</li>';
                         echo '</br>';
                     

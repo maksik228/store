@@ -41,14 +41,14 @@
     <title>Корзина</title>
 </head>
 <body>
-    <?
+<?php
     if(mysqli_num_rows($cart_query) > 0) {;
         ?>
     
     <div class="cart col-12 d-flex">
         <div class="col-4">
             <ul class="list-group">
-                <?
+                <?php
                     while ($row = mysqli_fetch_assoc($query)){
                         for ($i=0; $i < count($products); $i++) { 
                             if($products[$i]['product_id'] === $row['id']) {
@@ -56,7 +56,6 @@
                                 if($count > 1) {
                                     $total_price = $total_price + ($row['price'] * $count);
                                 }
-                                
                             }
                         }
                         if($row['sale'] && $row['sale_date'] > date('Y-m-d')) {
@@ -99,7 +98,7 @@
                     <input type="text" class="form-control" id="inputZip" name="inputZip" required>
                 </div>
                 <div class="col-12 mt-2">
-                    <?
+                    <?php
                     $out = array_values($products);
                     $_SESSION['order'] = json_encode($out);
                     echo '<input type="hidden" name="total_price" value="'.$total_price.'">';
@@ -109,14 +108,14 @@
             </form>
         </div>
     </div>
-    <?
+        <?php
     }
     ?>
     <div class="order">
         <h1>История заказов</h1>
         <div class="col-4">
             <ul class="list-group">
-                <?  
+                <?php
                     if(mysqli_num_rows($order_query) > 0) {
                         while ($row = mysqli_fetch_assoc($order_query)){
                             echo '<li class="list-group-item d-flex justify-content-between align-items-center">
